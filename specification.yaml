@@ -1,0 +1,109 @@
+users:
+  - file: "output/user-data-grad.json"
+    type: "json"
+    key: "{{ email }}"
+    fields:
+      # internal field
+      "type": "grad-students"
+      "year": "{{ profile.cohort.split('-')[0] }}"
+
+      # Slack normal fields
+      "givenName": "{{ first }}"
+      "familyName": "{{ last}}"
+      "userName": "{{ email.split('@')[0] }}"
+
+      # Slack extended fields
+      "Degree": "{{ profile.degree }}"
+      "Cohort Year": "{{ profile.cohort }}"
+      "Website": "{{ profile.homepage }}"
+      "Research Area": "{{ profile['research-areas'] }}"
+      "Adviser": "{{ profile.advisers }}"
+
+  - file: "output/user-data-researchers.json"
+    type: "json"
+    key: "{{ email }}"
+    fields:
+      # internal field
+      "type": "researchers"
+      "year": "{{ profile.cohort }}"
+
+      # Slack normal fields
+      "givenName": "{{ first }}"
+      "familyName": "{{ last}}"
+      "userName": "{{ email.split('@')[0] }}"
+
+      # Slack extended fields
+      "Degree": "{{ profile.degree }}"
+      "Cohort Year": "{{ profile.cohort }}"
+      "Website": "{{ profile.homepage }}"
+      "Research Area": "{{ profile['research-areas'] }}"
+      "Adviser": "{{ profile.advisers }}"
+
+  - file: "input/guests.json"
+    type: "json"
+    key: "{{ email }}"
+    fields:
+      "type": ["guests"]
+
+      # Slack normal fields
+      "givenName": "{{ first }}"
+      "familyName": "{{ last }}"
+      "userName": "{{ email.split('@')[0] }}"
+
+      # Slack extended fields
+      "Degree": "{{ profile.degree }}"
+      "Website": "{{ profile.homepage }}"
+
+settings:
+  workspace: "https://princetoncsgrad.slack.com/"
+  keep_customized_photos: true
+  keep_customized_name: false
+  extend_group_memberships: false
+
+groups:
+  - name: "phd-{{ year }}"
+    filter: "$.where($.profile.degree = 'Ph.D.')"
+
+  - name: "mse-{{ year }}"
+    filter: "$.where($.profile.degree = 'M.S.E.')"
+
+  - name: "researchers"
+    filter: "$.where('researchers' in $.type)"
+
+channels:
+  - name: "dept-wins"
+    filter: "$.where($.profile.degree in ['M.S.E.', 'Ph.D.'] or 'researchers' in $.type)"
+
+  - name: "announcements"
+    permissions: "admin"
+    filter: "$.where($.profile.degree in ['M.S.E.', 'Ph.D.'])"
+
+  - name: "grad-orientation"
+    permissions: "admin"
+    filter: "$.where($.profile.cohort in ['2022-23'])"
+
+  - name: "grad-fellowships-phd"
+    filter: "$.where($.profile.degree in ['Ph.D.'])"
+
+  - name: "grad-fellowships-masters"
+    filter: "$.where($.profile.degree in ['M.S.E.'])"
+
+  - name: "researchers"
+    groups: ["researchers"]
+    private: false
+
+  - name: "phd-{{ year }}"
+    groups: ["phd*"]
+    private: true
+
+  - name: "mse-{{ year }}"
+    groups: ["mse*"]
+    private: true
+
+  - name: "phd"
+    groups: ["phd*"]
+    private: false
+
+  - name: "mse"
+    groups: ["mse*"]
+    private: false
