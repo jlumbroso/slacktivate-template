@@ -1,3 +1,9 @@
+settings:
+  workspace: "https://princetoncsgrad.slack.com/"
+  keep_customized_photos: true
+  keep_customized_name: false
+  extend_group_memberships: false
+
 users:
   - file: "output/user-data-grad.json"
     type: "json"
@@ -53,12 +59,6 @@ users:
       # Slack extended fields
       "Degree": "{{ profile.degree }}"
       "Website": "{{ profile.homepage }}"
-
-settings:
-  workspace: "https://princetoncsgrad.slack.com/"
-  keep_customized_photos: true
-  keep_customized_name: false
-  extend_group_memberships: false
 
 groups:
   - name: "phd-{{ year }}"
